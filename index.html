@@ -1,129 +1,178 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- SEO & GOOGLE RANKING -->
     <title>KREATERZ | High-Performance Creative AI</title>
-    <meta name="description" content="KREATERZ is a decentralized neural engine for generative art and cognitive engineering.">
     
-    <!-- THE LOGO LINK -->
-    <!-- Put your 'logo.png' in the same folder as this index.html file -->
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #030303;
+            --bg: #010101;
             --neon-blue: #00f2ff;
             --neon-purple: #bc13fe;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.12);
-            --text: #ffffff;
+            --neon-pink: #ff007f;
+            --neon-green: #00ff6a;
+            --glass: rgba(255, 255, 255, 0.02);
+            --border: rgba(188, 19, 254, 0.4); /* Neon Purple Default */
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); overflow: hidden; height: 100vh; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
 
         #bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
 
-        /* NAVIGATION */
+        /* MODERN NAVIGATION */
         nav {
-            position: fixed; top: 30px; width: 100%;
+            position: fixed; top: 40px; width: 100%;
             display: flex; justify-content: center; gap: 15px; z-index: 100;
         }
 
         .nav-link {
             background: var(--glass);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(12px);
-            padding: 12px 24px;
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--neon-purple); /* Neon Purple Outline */
+            backdrop-filter: blur(15px);
+            padding: 12px 28px;
+            border-radius: 100px;
+            color: white;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(188, 19, 254, 0.2);
         }
 
-        .nav-link:hover, .active-nav { border-color: var(--neon-blue); color: var(--neon-blue); }
-
-        /* INPUTS - Glowing Border */
-        input {
-            width: 100%; max-width: 350px; padding: 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border);
-            border-radius: 14px; color: white; outline: none;
-            transition: 0.4s;
-        }
-        input:focus {
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
+        .nav-link:hover, .active-nav { 
+            background: rgba(188, 19, 254, 0.1);
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.6);
+            transform: translateY(-2px);
         }
 
-        /* CONTAINERS */
+        /* PAGE ENGINE */
         .page {
             position: absolute; inset: 0;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            padding: 20px; opacity: 0; visibility: hidden;
+            padding: 40px; opacity: 0; visibility: hidden;
             transition: 0.6s ease; z-index: 10;
+            text-align: center;
         }
         .page.active { opacity: 1; visibility: visible; }
 
-        h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 900; letter-spacing: -2px;
-            background: linear-gradient(to right, #fff, var(--neon-blue));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        /* HOME PAGE TITLES */
+        .neon-title {
+            font-size: clamp(4rem, 15vw, 10rem);
+            font-weight: 900;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 
+                0 0 7px #fff,
+                0 0 10px #fff,
+                0 0 21px var(--neon-blue),
+                0 0 42px var(--neon-blue),
+                0 0 82px var(--neon-blue),
+                0 0 92px var(--neon-blue);
+            animation: flicker 2s infinite alternate;
         }
 
-        /* THE LAB - PROJECT BUTTONS */
-        .lab-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { text-shadow: 0 0 7px #fff, 0 0 10px #fff, 0 0 21px var(--neon-blue), 0 0 42px var(--neon-blue), 0 0 82px var(--neon-blue); }
+            20%, 24%, 55% { text-shadow: none; }
+        }
+
+        .init-btn {
+            margin-top: 50px;
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: white;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            background-size: 200% 200%;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+            transition: 0.4s;
+            animation: gradientMove 3s ease infinite;
+        }
+        
+        .init-btn:hover {
+            transform: scale(1.1) rotate(-1deg);
+            box-shadow: 0 0 50px rgba(188, 19, 254, 0.8);
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* THE LAB */
+        .lab-title {
+            font-size: 3rem;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px; width: 100%; max-width: 1200px;
+            margin-top: 40px;
+            padding: 20px;
+        }
         
         .project-card {
-            width: 240px; height: 160px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(0,242,255,0.02));
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.4s;
-            position: relative; overflow: hidden;
+            padding: 30px; border-radius: 24px;
+            transition: 0.4s; text-align: left;
+            position: relative;
         }
 
         .project-card:hover {
+            background: rgba(188, 19, 254, 0.05);
             border-color: var(--neon-blue);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,242,255,0.1);
+            transform: translateY(-10px);
         }
 
-        .project-card h3 { font-size: 1rem; margin-bottom: 8px; }
-        .project-card span { font-size: 0.6rem; color: var(--neon-blue); opacity: 0.7; }
+        .project-card h3 { font-size: 1.4rem; margin-bottom: 12px; color: var(--neon-blue); }
+        .project-card p { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
 
-        /* DETAIL MODAL */
-        .detail-card {
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid var(--border);
-            padding: 40px; border-radius: 24px;
-            max-width: 500px; text-align: left;
-            backdrop-filter: blur(20px);
+        /* ABOUT SECTION */
+        .about-content {
+            max-width: 800px;
+            background: var(--glass);
+            border: 2px solid var(--neon-purple);
+            padding: 50px;
+            border-radius: 30px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            text-align: left;
+            box-shadow: 0 0 40px rgba(188, 19, 254, 0.1);
         }
 
-        @media (max-width: 600px) {
-            nav { top: 15px; gap: 8px; }
-            .nav-link { font-size: 0.6rem; padding: 10px; }
+        .highlight-text { color: var(--neon-blue); font-weight: 800; }
+
+        @media (max-width: 768px) {
+            nav { top: 20px; gap: 8px; flex-wrap: wrap; }
+            .nav-link { padding: 8px 15px; font-size: 0.6rem; }
+            .neon-title { font-size: 4rem; }
+            .lab-grid { grid-template-columns: 1fr; overflow-y: auto; max-height: 60vh; }
         }
     </style>
 </head>
@@ -133,108 +182,143 @@
 
     <nav>
         <div class="nav-link active-nav" onclick="showPage('home')">Home</div>
-        <div class="nav-link" onclick="showPage('lab')">The Lab</div>
-        <div class="nav-link" onclick="showPage('logs')">Archives</div>
-        <div class="nav-link" onclick="showPage('sync')">Sync</div>
+        <div class="nav-link" onclick="showPage('lab')">Lab</div>
+        <div class="nav-link" onclick="showPage('logs')">About</div>
+        <div class="nav-link" onclick="showPage('sync')">Network</div>
     </nav>
 
-    <!-- Home -->
+    <!-- HOME -->
     <div id="home" class="page active">
-        <h1>KREATERZ</h1>
-        <p style="letter-spacing: 5px; opacity: 0.5; margin-bottom: 30px;">CREATIVE INTELLIGENCE</p>
-        <div class="nav-link" onclick="showPage('lab')" style="padding: 15px 40px;">Enter Lab</div>
+        <h1 class="neon-title">KREATERZ</h1>
+        <button class="init-btn" onclick="showPage('lab')">Initialize Lab</button>
     </div>
 
-    <!-- The Lab -->
+    <!-- THE LAB -->
     <div id="lab" class="page">
-        <h1>THE LAB</h1>
+        <h2 class="lab-title">ACTIVE EXPERIMENTS</h2>
+        <p style="color: var(--text-dim); margin-bottom: 20px;">Pushing the boundaries of Neural Art and Spatial Intelligence.</p>
         <div class="lab-grid">
-            <div class="project-card" onclick="showPage('neural-info')">
-                <h3>Neural Canvas</h3>
-                <span>v1.0 // ACTIVE</span>
+            <div class="project-card">
+                <div style="color: var(--neon-pink); font-weight: bold; font-size: 0.7rem; margin-bottom: 10px;">EXPERIMENT 001</div>
+                <h3>Morphos Core</h3>
+                <p>Step into the future of spatial rendering. Morphos Core utilizes high-frequency neural tensors to generate complex, non-Euclidean 3D structures in real-time. By bypassing standard polygonal workflows, it allows creators to manifest impossible geometries that respond to organic thought patterns and environmental audio harmonics.</p>
             </div>
-            <div class="project-card" onclick="showPage('soul-info')">
+            <div class="project-card">
+                <div style="color: var(--neon-purple); font-weight: bold; font-size: 0.7rem; margin-bottom: 10px;">EXPERIMENT 002</div>
                 <h3>Synthetic Soul</h3>
-                <span>BETA // TESTING</span>
+                <p>Experience cognitive persistence like never before. Synthetic Soul is a groundbreaking memory architecture designed for digital avatars. It allows AI entities to develop a genuine creative signature by learning your aesthetic preferences over time, evolving from a simple tool into a collaborative visionary partner.</p>
+            </div>
+            <div class="project-card">
+                <div style="color: #ff9e00; font-weight: bold; font-size: 0.7rem; margin-bottom: 10px;">EXPERIMENT 003</div>
+                <h3>Nexus Link</h3>
+                <p>The backbone of a decentralized future. Nexus Link connects global edge-computing nodes into a single, massive neural supercomputer. This network allows for instantaneous AI inference regardless of your local hardware, democratizing high-end creative power and ensuring that the next big idea is never throttled by processing speed.</p>
+            </div>
+            <div class="project-card">
+                <div style="color: var(--neon-green); font-weight: bold; font-size: 0.7rem; margin-bottom: 10px;">EXPERIMENT 004</div>
+                <h3>Lumina Cinema</h3>
+                <p>Redefining virtual photography through neural light-field manipulation. Lumina Cinema simulates billions of light bounces per second, allowing filmmakers to direct virtual environments with the same physical nuance as a real-world set. It is the ultimate bridge between traditional cinematography and the unlimited potential of the metaverse.</p>
             </div>
         </div>
     </div>
 
-    <!-- Project Details -->
-    <div id="neural-info" class="page">
-        <div class="detail-card">
-            <h2 style="color: var(--neon-blue);">Neural Canvas</h2>
-            <p style="margin: 20px 0; line-height: 1.6; opacity: 0.8;">A high-performance engine that converts neural thought patterns into high-fidelity visual assets. It uses decentralized computing to render at lightspeed.</p>
-            <div class="nav-link" onclick="showPage('lab')">Back to Lab</div>
-        </div>
-    </div>
-
-    <div id="soul-info" class="page">
-        <div class="detail-card">
-            <h2 style="color: var(--neon-purple);">Synthetic Soul</h2>
-            <p style="margin: 20px 0; line-height: 1.6; opacity: 0.8;">Cognitive architecture for digital beings. This project focuses on giving AI a "creative memory" so it can learn your style over time.</p>
-            <div class="nav-link" onclick="showPage('lab')">Back to Lab</div>
-        </div>
-    </div>
-
-    <!-- Archives / Dev Log -->
+    <!-- ABOUT -->
     <div id="logs" class="page">
-        <h1>ARCHIVES</h1>
-        <div class="detail-card">
-            <p style="color: var(--neon-blue); font-size: 0.7rem; font-weight: bold; margin-bottom: 10px;">CORPORATE PROFILE</p>
-            <p style="line-height: 1.6;"><strong>KREATERZ</strong> is a next-generation technology studio specializing in decentralized AI. We build the bridge between human imagination and machine execution.</p>
-            <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
-            <p style="font-size: 0.8rem; opacity: 0.6;">Located in the Digital Ether. Synced Globally.</p>
+        <h1 style="font-size: 3rem; margin-bottom: 30px;">THE <span style="color: var(--neon-purple);">VISION</span></h1>
+        <div class="about-content">
+            <p>
+                <span class="highlight-text">KREATERZ</span> is a high-performance technology studio founded by <span class="highlight-text">DELVIN</span>, a visionary developer and architect of the digital ether. We are dedicated to bridging the gap between human imagination and machine execution. 
+                <br><br>
+                Our mission is to build the world’s most advanced decentralized neural engines, empowering a new generation of creators with tools like the Morphos Core and Synthetic Soul. At <span class="highlight-text">KREATERZ</span>, we believe that AI should not just automate, but amplify the human soul. Led by <span class="highlight-text">DELVIN</span>, our team of cognitive engineers is currently redefining the boundaries of spatial computing and autonomous creativity.
+            </p>
         </div>
     </div>
 
-    <!-- Sync -->
+    <!-- NETWORK -->
     <div id="sync" class="page">
-        <h1>SYNC</h1>
-        <p style="margin-bottom: 20px; opacity: 0.5;">REQUEST NETWORK ENTRY</p>
-        <input type="email" placeholder="EMAIL@NETWORK.COM">
-        <div class="nav-link" style="margin-top: 20px; width: 100%; max-width: 350px; text-align: center;">Join Collective</div>
+        <h1 class="neon-title" style="font-size: 5rem;">JOIN</h1>
+        <p style="margin-bottom: 30px; opacity: 0.4; font-size: 0.8rem;" class="mono">ESTABLISH NEURAL CONNECTION</p>
+        <div style="width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 15px;">
+            <input type="text" placeholder="IDENTITY" style="background: var(--glass); border: 2px solid var(--neon-purple); padding: 18px; border-radius: 12px; color: white; outline: none; text-align: center;">
+            <input type="email" placeholder="NEURAL_EMAIL" style="background: var(--glass); border: 2px solid var(--neon-purple); padding: 18px; border-radius: 12px; color: white; outline: none; text-align: center;">
+            <button class="nav-link" style="width: 100%; padding: 20px; font-size: 0.8rem;">INITIATE SYNC</button>
+        </div>
     </div>
 
     <script>
-        // BACKGROUND PARTICLES
+        // 1. CREATIVE STARFIELD (Larger & More Dynamic)
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
         document.getElementById('bg-container').appendChild(renderer.domElement);
 
+        const starCount = 1200;
         const geometry = new THREE.BufferGeometry();
-        const vertices = [];
-        for (let i = 0; i < 2000; i++) {
-            vertices.push(THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000), THREE.MathUtils.randFloatSpread(2000));
+        const positions = new Float32Array(starCount * 3);
+        const sizes = new Float32Array(starCount);
+        const colors = new Float32Array(starCount * 3);
+
+        for (let i = 0; i < starCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 2500;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 2500;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 2500;
+            
+            sizes[i] = Math.random() * 5 + 2; // Larger, more creative stars
+
+            const mix = Math.random();
+            if(mix > 0.7) { // Blue
+                colors[i*3] = 0; colors[i*3+1] = 0.95; colors[i*3+2] = 1;
+            } else if(mix > 0.4) { // Purple
+                colors[i*3] = 0.74; colors[i*3+1] = 0.07; colors[i*3+2] = 0.99;
+            } else { // White-ish
+                colors[i*3] = 1; colors[i*3+1] = 1; colors[i*3+2] = 1;
+            }
         }
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-        const material = new THREE.PointsMaterial({ color: 0x00f2ff, size: 2, transparent: true, opacity: 0.5 });
-        const points = new THREE.Points(geometry, material);
-        scene.add(points);
-        camera.position.z = 500;
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const material = new THREE.PointsMaterial({ 
+            size: 4, 
+            vertexColors: true, 
+            transparent: true, 
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending 
+        });
+        
+        const stars = new THREE.Points(geometry, material);
+        scene.add(stars);
+        camera.position.z = 1000;
 
         function animate() {
             requestAnimationFrame(animate);
-            points.rotation.y += 0.0005;
+            stars.rotation.y += 0.0006;
+            stars.rotation.z += 0.0002;
             renderer.render(scene, camera);
         }
         animate();
 
-        // NAVIGATION LOGIC
+        // 2. NAVIGATION
         window.showPage = (id) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+            const activePage = document.querySelector('.page.active');
+            if (activePage) activePage.classList.remove('active');
             
-            // Highlight nav button
+            const nextPage = document.getElementById(id);
+            nextPage.classList.add('active');
+
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active-nav');
-                const pageGroup = (id.includes('info') || id === 'lab') ? 'the lab' : id;
-                if(link.innerText.toLowerCase() === pageGroup) link.classList.add('active-nav');
+                const label = link.innerText.toLowerCase();
+                const target = id === 'logs' ? 'about' : id;
+                if(label === target) link.classList.add('active-nav');
             });
 
-            gsap.from(`#${id} > *`, { y: 20, opacity: 0, duration: 0.5, stagger: 0.1 });
+            gsap.fromTo(`#${id} > *`, 
+                { y: 50, opacity: 0, scale: 0.9 }, 
+                { y: 0, opacity: 1, scale: 1, duration: 1, stagger: 0.15, ease: "power4.out" }
+            );
         };
 
         window.onresize = () => {
@@ -242,7 +326,14 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         };
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX - window.innerWidth / 2) * 0.1;
+            const y = (e.clientY - window.innerHeight / 2) * 0.1;
+            gsap.to(stars.rotation, { y: x * 0.0005, x: y * 0.0005, duration: 3 });
+        });
     </script>
 </body>
 </html>
+
 
