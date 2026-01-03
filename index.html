@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KREATERZ | The Next Level</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #05050A;
+            --neon-primary: #00F0FF;
+            --neon-accent: #9D00FF;
+            --neon-secondary: #00FF9C;
+            --text-main: #EAEAFF;
+            --glass: rgba(10, 10, 15, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .font-tech {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Neon Glow Effects */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .neon-text-accent {
+            text-shadow: 0 0 10px rgba(157, 0, 255, 0.5), 0 0 20px rgba(157, 0, 255, 0.3);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1), inset 0 0 10px rgba(0, 240, 255, 0.05);
+        }
+
+        .neon-border-accent {
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            box-shadow: 0 0 15px rgba(157, 0, 255, 0.1);
+        }
+
+        /* Glassmorphism Bento Cards */
+        .bento-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        /* Buttons */
+        .btn-neon {
+            position: relative;
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 2px solid var(--neon-primary);
+            color: var(--neon-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-neon:hover {
+            background: var(--neon-primary);
+            color: var(--bg-deep);
+            box-shadow: 0 0 25px var(--neon-primary);
+            transform: scale(1.05);
+        }
+
+        .btn-neon-accent {
+            border-color: var(--neon-accent);
+            color: var(--neon-accent);
+        }
+
+        .btn-neon-accent:hover {
+            background: var(--neon-accent);
+            color: #fff;
+            box-shadow: 0 0 25px var(--neon-accent);
+        }
+
+        /* Background Canvas */
+        #galaxy-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(5, 5, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-primary);
+            text-shadow: 0 0 8px var(--neon-primary);
+        }
+
+        /* Mobile Menu */
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+
+        #mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-accent); border-radius: 10px; }
+
+        /* Sections Hidden Logic */
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeIn 0.8s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-glow:focus {
+            outline: none;
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2" onclick="showPage('home')">
+            <div class="w-8 h-8 border-2 border-[#00F0FF] rounded-sm rotate-45 flex items-center justify-center">
+                <div class="w-4 h-4 bg-[#9D00FF] rounded-full"></div>
+            </div>
+            <span class="text-2xl font-bold font-tech neon-text tracking-tighter">KREATERZ</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex gap-8 items-center">
+            <span class="nav-link" onclick="showPage('home')">HOME</span>
+            <span class="nav-link" onclick="showPage('lab')">THE LAB</span>
+            <span class="nav-link" onclick="showPage('public')">BUILD-IN-PUBLIC</span>
+            <span class="nav-link" onclick="showPage('portfolio')">PORTFOLIO</span>
+            <span class="nav-link" onclick="showPage('dashboard')">DASHBOARD</span>
+            <button class="btn-neon text-sm py-2" onclick="showPage('auth')">ENTER LAB</button>
+        </div>
+
+        <!-- Hamburger -->
+        <div class="lg:hidden flex flex-col gap-1.5 cursor-pointer" id="hamburger">
+            <div class="w-8 h-0.5 bg-[#00F0FF]"></div>
+            <div class="w-8 h-0.5 bg-[#9D00FF]"></div>
+            <div class="w-8 h-0.5 bg-[#00FF9C]"></div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0A0A0F] z-[999] p-10 flex flex-col gap-8 justify-center items-center lg:hidden">
+        <div class="absolute top-6 right-6 text-3xl text-[#00F0FF]" id="close-menu">×</div>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('home')">HOME</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('lab')">THE LAB</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('public')">BUILD-IN-PUBLIC</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('portfolio')">PORTFOLIO</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('dashboard')">DASHBOARD</span>
+        <button class="btn-neon w-full" onclick="showPage('auth')">LOGIN / SIGN UP</button>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="pt-24 min-h-screen">
+
+        <!-- 1. HERO SECTION -->
+        <section id="home-view" class="page-view active container mx-auto px-6">
+            <div class="flex flex-col items-center text-center py-20">
+                <div class="inline-block px-4 py-1 border border-[#9D00FF] rounded-full text-xs font-tech mb-6 neon-text-accent">
+                    ALPHA ACCESS v2.5
+                </div>
+                <h1 class="text-5xl md:text-8xl font-bold mb-4 neon-text leading-tight">
+                    KREATERZ <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#9D00FF]">THE NEXT LEVEL</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-12 font-light">
+                    Bridging human imagination and artificial intelligence. We build intuitive, creative tools that simplify and elevate the digital life of modern creators.
+                </p>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <button class="btn-neon px-10 py-4" onclick="showPage('lab')">Enter The Lab</button>
+                    <button class="btn-neon btn-neon-accent px-10 py-4">Join Waitlist</button>
+                </div>
+
+                <!-- Bento Grid Preview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 w-full max-w-6xl">
+                    <div class="bento-card md:col-span-2 neon-border">
+                        <h3 class="text-xl mb-2 text-[#00F0FF]">The Problem</h3>
+                        <p class="text-gray-400">Creators are overwhelmed by complex AI workflows. Fragmented tools slow down the speed of thought.</p>
+                    </div>
+                    <div class="bento-card neon-border-accent">
+                        <h3 class="text-xl mb-2 text-[#9D00FF]">The Solution</h3>
+                        <p class="text-gray-400">Integrated AI-first apps that feel like an extension of your mind.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack Section -->
+            <div class="py-20 text-center border-t border-white/5 mt-20">
+                <h2 class="text-2xl mb-12 opacity-50">POWERED BY INDUSTRY GIANTS</h2>
+                <div class="flex flex-wrap justify-center gap-12 opacity-70 grayscale hover:grayscale-0 transition-all">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">GPT-4o</span>
+                        <div class="h-1 w-full bg-[#00F0FF] shadow-[0_0_10px_#00F0FF]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Claude 3.5</span>
+                        <div class="h-1 w-full bg-[#9D00FF] shadow-[0_0_10px_#9D00FF]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Midjourney</span>
+                        <div class="h-1 w-full bg-[#00FF9C] shadow-[0_0_10px_#00FF9C]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Stable Diffusion</span>
+                        <div class="h-1 w-full bg-white shadow-[0_0_10px_white]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Founder -->
+            <div class="py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="bento-card neon-border">
+                    <div class="w-24 h-24 rounded-full border-2 border-[#00F0FF] mb-6 overflow-hidden">
+                        <div class="w-full h-full bg-gradient-to-tr from-[#05050A] to-[#9D00FF] flex items-center justify-center text-3xl">D</div>
+                    </div>
+                    <h2 class="text-3xl mb-4">DELVIN</h2>
+                    <p class="text-gray-400 italic">"KREATERZ isn't just a software company; it's a movement to democratize high-end creative intelligence. We are moving to the next level of human-machine harmony."</p>
+                </div>
+                <div>
+                    <h2 class="text-4xl mb-6 neon-text">Our Vision</h2>
+                    <p class="text-gray-400 text-lg mb-4">In a world saturated with AI noise, Delvin founded KREATERZ to bring signal and soul back to tech.</p>
+                    <p class="text-gray-400 text-lg">We focus on the Gen-Z and Millennial spirit: fast, aesthetic, and infinitely scalable.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THE LAB (APP GALLERY) -->
+        <section id="lab-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 text-center neon-text">The Experimental Lab</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- App 1 -->
+                <div class="bento-card neon-border flex flex-col justify-between">
+                    <div>
+                        <div class="text-[#00F0FF] text-4xl mb-4 font-tech">01</div>
+                        <h3 class="text-xl mb-2">NEON-FLOW AI</h3>
+                        <p class="text-gray-400 text-sm mb-6">Generative UI systems that design themselves based on your prompt.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs">Launch App</button>
+                </div>
+                <!-- App 2 -->
+                <div class="bento-card neon-border-accent flex flex-col justify-between">
+                    <div>
+                        <div class="text-[#9D00FF] text-4xl mb-4 font-tech">02</div>
+                        <h3 class="text-xl mb-2">KREATIVE AGENT</h3>
+                        <p class="text-gray-400 text-sm mb-6">Your personal AI project manager that automates asset creation.</p>
+                    </div>
+                    <button class="btn-neon btn-neon-accent w-full text-xs">Access Agent</button>
+                </div>
+                <!-- App 3 -->
+                <div class="bento-card neon-border flex flex-col justify-between border-[#00FF9C]">
+                    <div>
+                        <div class="text-[#00FF9C] text-4xl mb-4 font-tech">03</div>
+                        <h3 class="text-xl mb-2">PULSE SYNC</h3>
+                        <p class="text-gray-400 text-sm mb-6">Real-time collaboration tool with AI-suggested brainstorm nodes.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs border-[#00FF9C] text-[#00FF9C] hover:bg-[#00FF9C]">Connect</button>
+                </div>
+                <!-- App 4 -->
+                <div class="bento-card neon-border flex flex-col justify-between">
+                    <div>
+                        <div class="text-white text-4xl mb-4 font-tech">04</div>
+                        <h3 class="text-xl mb-2">GENESIS LAB</h3>
+                        <p class="text-gray-400 text-sm mb-6">The foundation engine for building custom AI pipelines for creators.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs border-white text-white hover:bg-white">Initialize</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. BUILD IN PUBLIC -->
+        <section id="public-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 neon-text">Build In Public</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bento-card neon-border cursor-pointer">
+                    <div class="text-xs text-[#00F0FF] mb-2">LOG #42 — AUG 2024</div>
+                    <h3 class="text-xl mb-4">Designing AI-First Products</h3>
+                    <p class="text-gray-400 mb-4">How we rethink UI when the backend is an intelligent agent.</p>
+                    <span class="text-[#00F0FF] text-sm">Read More →</span>
+                </div>
+                <div class="bento-card neon-border-accent cursor-pointer">
+                    <div class="text-xs text-[#9D00FF] mb-2">LOG #41 — JUL 2024</div>
+                    <h3 class="text-xl mb-4">From Idea to AI App</h3>
+                    <p class="text-gray-400 mb-4">The journey of building the KREATERZ ecosystem in 90 days.</p>
+                    <span class="text-[#9D00FF] text-sm">Read More →</span>
+                </div>
+                <div class="bento-card neon-border cursor-pointer">
+                    <div class="text-xs text-[#00FF9C] mb-2">LOG #40 — JUN 2024</div>
+                    <h3 class="text-xl mb-4">The Future of Creative Agency</h3>
+                    <p class="text-gray-400 mb-4">Why human visionaries are more important than ever.</p>
+                    <span class="text-[#00FF9C] text-sm">Read More →</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. AUTH PAGES (Combined) -->
+        <section id="auth-view" class="page-view container mx-auto px-6 py-10">
+            <div class="max-w-md mx-auto bento-card neon-border">
+                <div class="flex justify-center gap-4 mb-8">
+                    <button class="font-tech text-sm text-[#00F0FF]" onclick="toggleAuth('login')">LOGIN</button>
+                    <span class="text-gray-600">|</span>
+                    <button class="font-tech text-sm text-gray-500" onclick="toggleAuth('signup')">SIGN UP</button>
+                </div>
+                <div id="auth-form-container">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-tech mb-2">EMAIL_ADDRESS</label>
+                            <input type="email" class="w-full bg-black/40 border border-white/10 p-3 rounded input-glow" placeholder="dev@kreaterz.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-tech mb-2">ACCESS_KEY</label>
+                            <input type="password" class="w-full bg-black/40 border border-white/10 p-3 rounded input-glow" placeholder="••••••••">
+                        </div>
+                        <button class="btn-neon w-full py-4 mt-4" onclick="showPage('dashboard')">INITIALIZE SESSION</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. DASHBOARD -->
+        <section id="dashboard-view" class="page-view container mx-auto px-6 py-10">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <div class="lg:w-64 space-y-4">
+                    <div class="bento-card p-6 neon-border-accent">
+                        <div class="text-xs font-tech text-[#9D00FF] mb-4">ACTIVE_USER</div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded bg-[#9D00FF]"></div>
+                            <div>
+                                <div class="text-sm">Delvin_K</div>
+                                <div class="text-[10px] text-gray-500">ADMIN_LEVEL_01</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-[#00F0FF]" onclick="showPage('profile')">PROFILE_VIEW</button>
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-gray-400">ANALYTICS</button>
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-gray-400">SETTINGS</button>
+                    </div>
+                </div>
+                <!-- Main Board -->
+                <div class="flex-1 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bento-card neon-border py-4">
+                            <div class="text-xs text-gray-500 mb-1">COMPUTE_POWER</div>
+                            <div class="text-2xl font-tech">84.2%</div>
+                        </div>
+                        <div class="bento-card neon-border py-4 border-[#00FF9C]">
+                            <div class="text-xs text-gray-500 mb-1">ACTIVE_APPS</div>
+                            <div class="text-2xl font-tech">03</div>
+                        </div>
+                        <div class="bento-card neon-border py-4 border-[#9D00FF]">
+                            <div class="text-xs text-gray-500 mb-1">NOTIFICATIONS</div>
+                            <div class="text-2xl font-tech">12</div>
+                        </div>
+                    </div>
+                    <div class="bento-card neon-border min-h-[400px]">
+                        <h3 class="text-xl mb-6 neon-text">Your AI Workflow</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-white/5 rounded">
+                                <span>Recent Project: "Cyberpunk Cityscape"</span>
+                                <span class="text-[#00FF9C] text-xs">COMPLETE</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-white/5 rounded">
+                                <span>Generating: "Abstract Geometry v4"</span>
+                                <span class="text-[#00F0FF] text-xs animate-pulse">PROCESSING...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. USER PROFILE -->
+        <section id="profile-view" class="page-view container mx-auto px-6 py-10">
+            <div class="max-w-4xl mx-auto bento-card neon-border">
+                <div class="flex flex-col md:flex-row gap-10 items-center md:items-start">
+                    <div class="w-40 h-40 rounded-2xl bg-gradient-to-br from-[#00F0FF] to-[#9D00FF] p-1">
+                        <div class="w-full h-full bg-[#05050A] rounded-2xl flex items-center justify-center text-4xl">D</div>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-4xl font-tech mb-2">DELVIN_KREATER</h2>
+                        <p class="text-[#00F0FF] mb-6">Founder & Creative Technologist</p>
+                        <p class="text-gray-400 mb-8 leading-relaxed">
+                            Pioneering the intersection of aesthetics and artificial intelligence. Focused on building tools that give creators superpowers.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">AI Architecture</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">Visual Design</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">Neural Networks</span>
+                        </div>
+                    </div>
+                    <button class="btn-neon text-xs">EDIT_PROFILE</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. PORTFOLIO -->
+        <section id="portfolio-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 text-center neon-text">Selected Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#00F0FF]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Project Zero</h3>
+                        <p class="text-sm text-gray-500">The first AI-generated brand identity for KREATERZ.</p>
+                    </div>
+                </div>
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#9D00FF]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Nebula UI</h3>
+                        <p class="text-sm text-gray-500">A design system that reacts to cosmic radiation data.</p>
+                    </div>
+                </div>
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#00FF9C]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Flux Motion</h3>
+                        <p class="text-sm text-gray-500">AI interpolated video frames for high-fidelity visuals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER / WAITLIST -->
+        <section class="container mx-auto px-6 py-32">
+            <div class="bento-card neon-border text-center">
+                <h2 class="text-4xl mb-6 neon-text font-tech">Ready for the Next Level?</h2>
+                <p class="text-gray-400 mb-10 max-w-xl mx-auto">Join 50,000+ creators building the future with KREATERZ.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="btn-neon">Join The Next Level</button>
+                    <button class="btn-neon btn-neon-accent">Unlock Early Access</button>
+                    <button class="btn-neon border-[#00FF9C] text-[#00FF9C] hover:bg-[#00FF9C]">Enter The Lab</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-10 border-t border-white/5 text-center text-xs text-gray-500">
+        <div class="mb-4 font-tech text-[#00F0FF]">KREATERZ — THE NEXT LEVEL</div>
+        <div class="mb-4">@kreaterzofficial</div>
+        <div class="w-1/4 h-[1px] bg-gradient-to-r from-transparent via-[#9D00FF] to-transparent mx-auto mb-4"></div>
+        <p>&copy; 2024 KREATERZ LABS. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        /**
+         * GALAXY BACKGROUND ENGINE
+         * Optimized Starfield & Nebula Animation
+         */
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+        let mouseX = 0, mouseY = 0;
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            
+            // Create layers of stars (Parallax Depth)
+            for (let i = 0; i < 400; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 1.5,
+                    opacity: Math.random(),
+                    speed: Math.random() * 0.5 + 0.1,
+                    depth: Math.random() * 3 + 1, // Parallax depth
+                    color: i % 20 === 0 ? '#00F0FF' : i % 35 === 0 ? '#9D00FF' : '#EAEAFF'
+                });
+            }
+        }
+
+        function drawGalaxy() {
+            ctx.fillStyle = '#05050A';
+            ctx.fillRect(0, 0, width, height);
+
+            // Subtle Nebula Pulses
+            const time = Date.now() * 0.0005;
+            const grad = ctx.createRadialGradient(
+                width / 2 + Math.cos(time) * 100, 
+                height / 2 + Math.sin(time) * 100, 
+                0, 
+                width / 2, 
+                height / 2, 
+                width
+            );
+            grad.addColorStop(0, 'rgba(75, 0, 255, 0.05)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Animate Stars
+            stars.forEach(star => {
+                // Parallax shift based on mouse
+                const moveX = (mouseX / width - 0.5) * star.depth * 20;
+                const moveY = (mouseY / height - 0.5) * star.depth * 20;
+
+                ctx.beginPath();
+                ctx.arc(star.x + moveX, star.y + moveY, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = star.opacity * (Math.sin(time * star.speed) * 0.5 + 0.5);
+                ctx.fill();
+
+                // Slow vertical drift
+                star.y -= star.speed * 0.2;
+                if (star.y < 0) star.y = height;
+            });
+
+            ctx.globalAlpha = 1.0;
+            requestAnimationFrame(drawGalaxy);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        /**
+         * ROUTING SYSTEM
+         */
+        function showPage(pageId) {
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(v => v.classList.remove('active'));
+            
+            const target = document.getElementById(`${pageId}-view`);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.remove('active');
+        }
+
+        /**
+         * UI INTERACTIONS
+         */
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+
+        hamburger.addEventListener('click', () => mobileMenu.classList.add('active'));
+        closeMenu.addEventListener('click', () => mobileMenu.classList.remove('active'));
+
+        function toggleAuth(type) {
+            // Simple logic for visual toggle
+            const buttons = document.querySelectorAll('#auth-view button.font-tech');
+            buttons.forEach(btn => btn.classList.replace('text-[#00F0FF]', 'text-gray-500'));
+            event.target.classList.replace('text-gray-500', 'text-[#00F0FF]');
+        }
+
+        // Initialize Everything
+        window.onload = () => {
+            initCanvas();
+            drawGalaxy();
+        };
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KREATERZ | The Next Level</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #05050A;
+            --neon-primary: #00F0FF;
+            --neon-accent: #9D00FF;
+            --neon-secondary: #00FF9C;
+            --text-main: #EAEAFF;
+            --glass: rgba(10, 10, 15, 0.7);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        h1, h2, h3, .font-tech {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Neon Glow Effects */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .neon-text-accent {
+            text-shadow: 0 0 10px rgba(157, 0, 255, 0.5), 0 0 20px rgba(157, 0, 255, 0.3);
+        }
+
+        .neon-border {
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1), inset 0 0 10px rgba(0, 240, 255, 0.05);
+        }
+
+        .neon-border-accent {
+            border: 1px solid rgba(157, 0, 255, 0.3);
+            box-shadow: 0 0 15px rgba(157, 0, 255, 0.1);
+        }
+
+        /* Glassmorphism Bento Cards */
+        .bento-card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        /* Buttons */
+        .btn-neon {
+            position: relative;
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 2px solid var(--neon-primary);
+            color: var(--neon-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .btn-neon:hover {
+            background: var(--neon-primary);
+            color: var(--bg-deep);
+            box-shadow: 0 0 25px var(--neon-primary);
+            transform: scale(1.05);
+        }
+
+        .btn-neon-accent {
+            border-color: var(--neon-accent);
+            color: var(--neon-accent);
+        }
+
+        .btn-neon-accent:hover {
+            background: var(--neon-accent);
+            color: #fff;
+            box-shadow: 0 0 25px var(--neon-accent);
+        }
+
+        /* Background Canvas */
+        #galaxy-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(5, 5, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-primary);
+            text-shadow: 0 0 8px var(--neon-primary);
+        }
+
+        /* Mobile Menu */
+        #mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.4s ease-in-out;
+        }
+
+        #mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-accent); border-radius: 10px; }
+
+        /* Sections Hidden Logic */
+        .page-view { display: none; }
+        .page-view.active { display: block; animation: fadeIn 0.8s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-glow:focus {
+            outline: none;
+            border-color: var(--neon-primary);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="galaxy-canvas"></canvas>
+
+    <!-- Navigation Bar -->
+    <nav class="px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2" onclick="showPage('home')">
+            <div class="w-8 h-8 border-2 border-[#00F0FF] rounded-sm rotate-45 flex items-center justify-center">
+                <div class="w-4 h-4 bg-[#9D00FF] rounded-full"></div>
+            </div>
+            <span class="text-2xl font-bold font-tech neon-text tracking-tighter">KREATERZ</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden lg:flex gap-8 items-center">
+            <span class="nav-link" onclick="showPage('home')">HOME</span>
+            <span class="nav-link" onclick="showPage('lab')">THE LAB</span>
+            <span class="nav-link" onclick="showPage('public')">BUILD-IN-PUBLIC</span>
+            <span class="nav-link" onclick="showPage('portfolio')">PORTFOLIO</span>
+            <span class="nav-link" onclick="showPage('dashboard')">DASHBOARD</span>
+            <button class="btn-neon text-sm py-2" onclick="showPage('auth')">ENTER LAB</button>
+        </div>
+
+        <!-- Hamburger -->
+        <div class="lg:hidden flex flex-col gap-1.5 cursor-pointer" id="hamburger">
+            <div class="w-8 h-0.5 bg-[#00F0FF]"></div>
+            <div class="w-8 h-0.5 bg-[#9D00FF]"></div>
+            <div class="w-8 h-0.5 bg-[#00FF9C]"></div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0A0A0F] z-[999] p-10 flex flex-col gap-8 justify-center items-center lg:hidden">
+        <div class="absolute top-6 right-6 text-3xl text-[#00F0FF]" id="close-menu">×</div>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('home')">HOME</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('lab')">THE LAB</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('public')">BUILD-IN-PUBLIC</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('portfolio')">PORTFOLIO</span>
+        <span class="text-2xl font-tech nav-link" onclick="showPage('dashboard')">DASHBOARD</span>
+        <button class="btn-neon w-full" onclick="showPage('auth')">LOGIN / SIGN UP</button>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="pt-24 min-h-screen">
+
+        <!-- 1. HERO SECTION -->
+        <section id="home-view" class="page-view active container mx-auto px-6">
+            <div class="flex flex-col items-center text-center py-20">
+                <div class="inline-block px-4 py-1 border border-[#9D00FF] rounded-full text-xs font-tech mb-6 neon-text-accent">
+                    ALPHA ACCESS v2.5
+                </div>
+                <h1 class="text-5xl md:text-8xl font-bold mb-4 neon-text leading-tight">
+                    KREATERZ <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#00F0FF] to-[#9D00FF]">THE NEXT LEVEL</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-400 max-w-2xl mb-12 font-light">
+                    Bridging human imagination and artificial intelligence. We build intuitive, creative tools that simplify and elevate the digital life of modern creators.
+                </p>
+                <div class="flex flex-wrap justify-center gap-6">
+                    <button class="btn-neon px-10 py-4" onclick="showPage('lab')">Enter The Lab</button>
+                    <button class="btn-neon btn-neon-accent px-10 py-4">Join Waitlist</button>
+                </div>
+
+                <!-- Bento Grid Preview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 w-full max-w-6xl">
+                    <div class="bento-card md:col-span-2 neon-border">
+                        <h3 class="text-xl mb-2 text-[#00F0FF]">The Problem</h3>
+                        <p class="text-gray-400">Creators are overwhelmed by complex AI workflows. Fragmented tools slow down the speed of thought.</p>
+                    </div>
+                    <div class="bento-card neon-border-accent">
+                        <h3 class="text-xl mb-2 text-[#9D00FF]">The Solution</h3>
+                        <p class="text-gray-400">Integrated AI-first apps that feel like an extension of your mind.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tech Stack Section -->
+            <div class="py-20 text-center border-t border-white/5 mt-20">
+                <h2 class="text-2xl mb-12 opacity-50">POWERED BY INDUSTRY GIANTS</h2>
+                <div class="flex flex-wrap justify-center gap-12 opacity-70 grayscale hover:grayscale-0 transition-all">
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">GPT-4o</span>
+                        <div class="h-1 w-full bg-[#00F0FF] shadow-[0_0_10px_#00F0FF]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Claude 3.5</span>
+                        <div class="h-1 w-full bg-[#9D00FF] shadow-[0_0_10px_#9D00FF]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Midjourney</span>
+                        <div class="h-1 w-full bg-[#00FF9C] shadow-[0_0_10px_#00FF9C]"></div>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <span class="font-tech text-sm">Stable Diffusion</span>
+                        <div class="h-1 w-full bg-white shadow-[0_0_10px_white]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Founder -->
+            <div class="py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div class="bento-card neon-border">
+                    <div class="w-24 h-24 rounded-full border-2 border-[#00F0FF] mb-6 overflow-hidden">
+                        <div class="w-full h-full bg-gradient-to-tr from-[#05050A] to-[#9D00FF] flex items-center justify-center text-3xl">D</div>
+                    </div>
+                    <h2 class="text-3xl mb-4">DELVIN</h2>
+                    <p class="text-gray-400 italic">"KREATERZ isn't just a software company; it's a movement to democratize high-end creative intelligence. We are moving to the next level of human-machine harmony."</p>
+                </div>
+                <div>
+                    <h2 class="text-4xl mb-6 neon-text">Our Vision</h2>
+                    <p class="text-gray-400 text-lg mb-4">In a world saturated with AI noise, Delvin founded KREATERZ to bring signal and soul back to tech.</p>
+                    <p class="text-gray-400 text-lg">We focus on the Gen-Z and Millennial spirit: fast, aesthetic, and infinitely scalable.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THE LAB (APP GALLERY) -->
+        <section id="lab-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 text-center neon-text">The Experimental Lab</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- App 1 -->
+                <div class="bento-card neon-border flex flex-col justify-between">
+                    <div>
+                        <div class="text-[#00F0FF] text-4xl mb-4 font-tech">01</div>
+                        <h3 class="text-xl mb-2">NEON-FLOW AI</h3>
+                        <p class="text-gray-400 text-sm mb-6">Generative UI systems that design themselves based on your prompt.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs">Launch App</button>
+                </div>
+                <!-- App 2 -->
+                <div class="bento-card neon-border-accent flex flex-col justify-between">
+                    <div>
+                        <div class="text-[#9D00FF] text-4xl mb-4 font-tech">02</div>
+                        <h3 class="text-xl mb-2">KREATIVE AGENT</h3>
+                        <p class="text-gray-400 text-sm mb-6">Your personal AI project manager that automates asset creation.</p>
+                    </div>
+                    <button class="btn-neon btn-neon-accent w-full text-xs">Access Agent</button>
+                </div>
+                <!-- App 3 -->
+                <div class="bento-card neon-border flex flex-col justify-between border-[#00FF9C]">
+                    <div>
+                        <div class="text-[#00FF9C] text-4xl mb-4 font-tech">03</div>
+                        <h3 class="text-xl mb-2">PULSE SYNC</h3>
+                        <p class="text-gray-400 text-sm mb-6">Real-time collaboration tool with AI-suggested brainstorm nodes.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs border-[#00FF9C] text-[#00FF9C] hover:bg-[#00FF9C]">Connect</button>
+                </div>
+                <!-- App 4 -->
+                <div class="bento-card neon-border flex flex-col justify-between">
+                    <div>
+                        <div class="text-white text-4xl mb-4 font-tech">04</div>
+                        <h3 class="text-xl mb-2">GENESIS LAB</h3>
+                        <p class="text-gray-400 text-sm mb-6">The foundation engine for building custom AI pipelines for creators.</p>
+                    </div>
+                    <button class="btn-neon w-full text-xs border-white text-white hover:bg-white">Initialize</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. BUILD IN PUBLIC -->
+        <section id="public-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 neon-text">Build In Public</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bento-card neon-border cursor-pointer">
+                    <div class="text-xs text-[#00F0FF] mb-2">LOG #42 — AUG 2024</div>
+                    <h3 class="text-xl mb-4">Designing AI-First Products</h3>
+                    <p class="text-gray-400 mb-4">How we rethink UI when the backend is an intelligent agent.</p>
+                    <span class="text-[#00F0FF] text-sm">Read More →</span>
+                </div>
+                <div class="bento-card neon-border-accent cursor-pointer">
+                    <div class="text-xs text-[#9D00FF] mb-2">LOG #41 — JUL 2024</div>
+                    <h3 class="text-xl mb-4">From Idea to AI App</h3>
+                    <p class="text-gray-400 mb-4">The journey of building the KREATERZ ecosystem in 90 days.</p>
+                    <span class="text-[#9D00FF] text-sm">Read More →</span>
+                </div>
+                <div class="bento-card neon-border cursor-pointer">
+                    <div class="text-xs text-[#00FF9C] mb-2">LOG #40 — JUN 2024</div>
+                    <h3 class="text-xl mb-4">The Future of Creative Agency</h3>
+                    <p class="text-gray-400 mb-4">Why human visionaries are more important than ever.</p>
+                    <span class="text-[#00FF9C] text-sm">Read More →</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. AUTH PAGES (Combined) -->
+        <section id="auth-view" class="page-view container mx-auto px-6 py-10">
+            <div class="max-w-md mx-auto bento-card neon-border">
+                <div class="flex justify-center gap-4 mb-8">
+                    <button class="font-tech text-sm text-[#00F0FF]" onclick="toggleAuth('login')">LOGIN</button>
+                    <span class="text-gray-600">|</span>
+                    <button class="font-tech text-sm text-gray-500" onclick="toggleAuth('signup')">SIGN UP</button>
+                </div>
+                <div id="auth-form-container">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-tech mb-2">EMAIL_ADDRESS</label>
+                            <input type="email" class="w-full bg-black/40 border border-white/10 p-3 rounded input-glow" placeholder="dev@kreaterz.com">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-tech mb-2">ACCESS_KEY</label>
+                            <input type="password" class="w-full bg-black/40 border border-white/10 p-3 rounded input-glow" placeholder="••••••••">
+                        </div>
+                        <button class="btn-neon w-full py-4 mt-4" onclick="showPage('dashboard')">INITIALIZE SESSION</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. DASHBOARD -->
+        <section id="dashboard-view" class="page-view container mx-auto px-6 py-10">
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar -->
+                <div class="lg:w-64 space-y-4">
+                    <div class="bento-card p-6 neon-border-accent">
+                        <div class="text-xs font-tech text-[#9D00FF] mb-4">ACTIVE_USER</div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded bg-[#9D00FF]"></div>
+                            <div>
+                                <div class="text-sm">Delvin_K</div>
+                                <div class="text-[10px] text-gray-500">ADMIN_LEVEL_01</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-[#00F0FF]" onclick="showPage('profile')">PROFILE_VIEW</button>
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-gray-400">ANALYTICS</button>
+                        <button class="text-left p-3 hover:bg-[#00F0FF]/10 rounded font-tech text-xs text-gray-400">SETTINGS</button>
+                    </div>
+                </div>
+                <!-- Main Board -->
+                <div class="flex-1 space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bento-card neon-border py-4">
+                            <div class="text-xs text-gray-500 mb-1">COMPUTE_POWER</div>
+                            <div class="text-2xl font-tech">84.2%</div>
+                        </div>
+                        <div class="bento-card neon-border py-4 border-[#00FF9C]">
+                            <div class="text-xs text-gray-500 mb-1">ACTIVE_APPS</div>
+                            <div class="text-2xl font-tech">03</div>
+                        </div>
+                        <div class="bento-card neon-border py-4 border-[#9D00FF]">
+                            <div class="text-xs text-gray-500 mb-1">NOTIFICATIONS</div>
+                            <div class="text-2xl font-tech">12</div>
+                        </div>
+                    </div>
+                    <div class="bento-card neon-border min-h-[400px]">
+                        <h3 class="text-xl mb-6 neon-text">Your AI Workflow</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-4 bg-white/5 rounded">
+                                <span>Recent Project: "Cyberpunk Cityscape"</span>
+                                <span class="text-[#00FF9C] text-xs">COMPLETE</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-white/5 rounded">
+                                <span>Generating: "Abstract Geometry v4"</span>
+                                <span class="text-[#00F0FF] text-xs animate-pulse">PROCESSING...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. USER PROFILE -->
+        <section id="profile-view" class="page-view container mx-auto px-6 py-10">
+            <div class="max-w-4xl mx-auto bento-card neon-border">
+                <div class="flex flex-col md:flex-row gap-10 items-center md:items-start">
+                    <div class="w-40 h-40 rounded-2xl bg-gradient-to-br from-[#00F0FF] to-[#9D00FF] p-1">
+                        <div class="w-full h-full bg-[#05050A] rounded-2xl flex items-center justify-center text-4xl">D</div>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-4xl font-tech mb-2">DELVIN_KREATER</h2>
+                        <p class="text-[#00F0FF] mb-6">Founder & Creative Technologist</p>
+                        <p class="text-gray-400 mb-8 leading-relaxed">
+                            Pioneering the intersection of aesthetics and artificial intelligence. Focused on building tools that give creators superpowers.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">AI Architecture</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">Visual Design</span>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded text-xs">Neural Networks</span>
+                        </div>
+                    </div>
+                    <button class="btn-neon text-xs">EDIT_PROFILE</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. PORTFOLIO -->
+        <section id="portfolio-view" class="page-view container mx-auto px-6 py-10">
+            <h2 class="text-4xl mb-12 text-center neon-text">Selected Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#00F0FF]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Project Zero</h3>
+                        <p class="text-sm text-gray-500">The first AI-generated brand identity for KREATERZ.</p>
+                    </div>
+                </div>
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#9D00FF]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Nebula UI</h3>
+                        <p class="text-sm text-gray-500">A design system that reacts to cosmic radiation data.</p>
+                    </div>
+                </div>
+                <div class="bento-card neon-border p-0">
+                    <div class="h-48 bg-gradient-to-tr from-black to-[#00FF9C]/20 rounded-t-2xl"></div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-tech mb-2">Flux Motion</h3>
+                        <p class="text-sm text-gray-500">AI interpolated video frames for high-fidelity visuals.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER / WAITLIST -->
+        <section class="container mx-auto px-6 py-32">
+            <div class="bento-card neon-border text-center">
+                <h2 class="text-4xl mb-6 neon-text font-tech">Ready for the Next Level?</h2>
+                <p class="text-gray-400 mb-10 max-w-xl mx-auto">Join 50,000+ creators building the future with KREATERZ.</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button class="btn-neon">Join The Next Level</button>
+                    <button class="btn-neon btn-neon-accent">Unlock Early Access</button>
+                    <button class="btn-neon border-[#00FF9C] text-[#00FF9C] hover:bg-[#00FF9C]">Enter The Lab</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="py-10 border-t border-white/5 text-center text-xs text-gray-500">
+        <div class="mb-4 font-tech text-[#00F0FF]">KREATERZ — THE NEXT LEVEL</div>
+        <div class="mb-4">@kreaterzofficial</div>
+        <div class="w-1/4 h-[1px] bg-gradient-to-r from-transparent via-[#9D00FF] to-transparent mx-auto mb-4"></div>
+        <p>&copy; 2024 KREATERZ LABS. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+        /**
+         * GALAXY BACKGROUND ENGINE
+         * Optimized Starfield & Nebula Animation
+         */
+        const canvas = document.getElementById('galaxy-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+        let mouseX = 0, mouseY = 0;
+
+        function initCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            
+            // Create layers of stars (Parallax Depth)
+            for (let i = 0; i < 400; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 1.5,
+                    opacity: Math.random(),
+                    speed: Math.random() * 0.5 + 0.1,
+                    depth: Math.random() * 3 + 1, // Parallax depth
+                    color: i % 20 === 0 ? '#00F0FF' : i % 35 === 0 ? '#9D00FF' : '#EAEAFF'
+                });
+            }
+        }
+
+        function drawGalaxy() {
+            ctx.fillStyle = '#05050A';
+            ctx.fillRect(0, 0, width, height);
+
+            // Subtle Nebula Pulses
+            const time = Date.now() * 0.0005;
+            const grad = ctx.createRadialGradient(
+                width / 2 + Math.cos(time) * 100, 
+                height / 2 + Math.sin(time) * 100, 
+                0, 
+                width / 2, 
+                height / 2, 
+                width
+            );
+            grad.addColorStop(0, 'rgba(75, 0, 255, 0.05)');
+            grad.addColorStop(1, 'transparent');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Animate Stars
+            stars.forEach(star => {
+                // Parallax shift based on mouse
+                const moveX = (mouseX / width - 0.5) * star.depth * 20;
+                const moveY = (mouseY / height - 0.5) * star.depth * 20;
+
+                ctx.beginPath();
+                ctx.arc(star.x + moveX, star.y + moveY, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = star.opacity * (Math.sin(time * star.speed) * 0.5 + 0.5);
+                ctx.fill();
+
+                // Slow vertical drift
+                star.y -= star.speed * 0.2;
+                if (star.y < 0) star.y = height;
+            });
+
+            ctx.globalAlpha = 1.0;
+            requestAnimationFrame(drawGalaxy);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        /**
+         * ROUTING SYSTEM
+         */
+        function showPage(pageId) {
+            const views = document.querySelectorAll('.page-view');
+            views.forEach(v => v.classList.remove('active'));
+            
+            const target = document.getElementById(`${pageId}-view`);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.remove('active');
+        }
+
+        /**
+         * UI INTERACTIONS
+         */
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMenu = document.getElementById('close-menu');
+
+        hamburger.addEventListener('click', () => mobileMenu.classList.add('active'));
+        closeMenu.addEventListener('click', () => mobileMenu.classList.remove('active'));
+
+        function toggleAuth(type) {
+            // Simple logic for visual toggle
+            const buttons = document.querySelectorAll('#auth-view button.font-tech');
+            buttons.forEach(btn => btn.classList.replace('text-[#00F0FF]', 'text-gray-500'));
+            event.target.classList.replace('text-gray-500', 'text-[#00F0FF]');
+        }
+
+        // Initialize Everything
+        window.onload = () => {
+            initCanvas();
+            drawGalaxy();
+        };
+    </script>
+</body>
+</html>
+
